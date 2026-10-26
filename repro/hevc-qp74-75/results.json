@@ -1,0 +1,18 @@
+[
+  {
+    "qp": 74,
+    "samples": 24576,
+    "beforeMismatch": 16377,
+    "afterMismatch": 0,
+    "streamSha256": "fe92b55f9fbc941b396a615a175ad6ebe95111b8cded2064a39e0c6583fa52fc",
+    "referenceSha256": "6626e6bcc749805e63cb286fc0dc243328c1604511ee890438cfacd0ad5d4201"
+  },
+  {
+    "qp": 75,
+    "samples": 24576,
+    "beforeMismatch": 16379,
+    "afterMismatch": 0,
+    "streamSha256": "e899332464fcec03f84a54cbfda5fbb70001f7d846123000914d69a1dd89d3f7",
+    "referenceSha256": "cddef7c1e197e3340c5885d1f9e518607f01989b671444821236a91ce906664f"
+  }
+]
