@@ -67,8 +67,14 @@ Upstream `CONTRIBUTING.md` directs contributions to
 https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls or ffmpeg-devel, and says GitHub
 pull requests are ignored. No GitHub PR was opened on the mirror.
 
-The automated browser currently receives Anubis Access Denied on the
-Forgejo login page. No upstream PR or mailing-list submission has been
-completed. A Forgejo account/session or a suitable subscribed email account
-is needed to complete the upstream submission. This branch hosts reviewable
-patches and sample download URLs in the meantime.
+Submitted as ohah to the official Forgejo:
+https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/25467
+
+The initial automated browser received Anubis Access Denied. Submission was
+completed through the user's signed-in Aside Browser using `aside repl`.
+The `git format-patch` files were applied with Forgejo's patch editor as two
+commits (`97ff87d7d8` and `50972f5e67`). Commit metadata differs from the
+GitHub branch, while the source changes remain the same. Both HEVC samples
+are attached directly to the upstream PR with matching FATE filenames.
+Upstream workflows require maintainer approval for this first contribution;
+upstream review and full CI are pending.
