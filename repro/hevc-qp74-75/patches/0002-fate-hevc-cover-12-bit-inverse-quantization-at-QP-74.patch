@@ -1,0 +1,80 @@
+From d187d70aba141ba617f3ecc9b9dd66bb5a1624f1 Mon Sep 17 00:00:00 2001
+From: ohah <16170776+ohah@users.noreply.github.com>
+Date: Mon, 26 Oct 2026 18:42:00 +0900
+Subject: [PATCH 2/2] fate/hevc: cover 12-bit inverse quantization at QP 74 and
+ 75
+
+Add two synthetic 128x64 12-bit 4:4:4 single-frame inputs that exercise
+the last two dequantization table entries. The references match the
+reconstructed pictures returned by the x265 4.2 encoder API.
+
+Both tests fail on the unmodified decoder and pass with the missing
+table entries initialized. The sample sizes are 7217 and 6781 bytes.
+
+Samples for hevc/12bit-444-qp74.hevc and hevc/12bit-444-qp75.hevc:
+https://raw.githubusercontent.com/ohah/FFmpeg/df6c311a005073ab714089c5a7b727098e30bb1d/repro/hevc-qp74-75/qp74.hevc
+https://raw.githubusercontent.com/ohah/FFmpeg/df6c311a005073ab714089c5a7b727098e30bb1d/repro/hevc-qp74-75/qp75.hevc
+
+The same directory contains the generator, independent reconstructed
+YUV outputs, reproduction instructions and SHA-256 hashes.
+
+Signed-off-by: ohah <16170776+ohah@users.noreply.github.com>
+---
+ tests/fate/hevc.mak            |  5 +++++
+ tests/ref/fate/hevc-12bit-qp74 | 10 ++++++++++
+ tests/ref/fate/hevc-12bit-qp75 | 10 ++++++++++
+ 3 files changed, 25 insertions(+)
+ create mode 100644 tests/ref/fate/hevc-12bit-qp74
+ create mode 100644 tests/ref/fate/hevc-12bit-qp75
+
+diff --git a/tests/fate/hevc.mak b/tests/fate/hevc.mak
+index b393581..09143bb 100644
+--- a/tests/fate/hevc.mak
++++ b/tests/fate/hevc.mak
+@@ -351,6 +351,11 @@ FATE_HEVC-$(call FRAMECRC, MOV, HEVC) += fate-hevc-alpha
+ fate-hevc-color-reserved: CMD = framecrc -bsf:v hevc_metadata=colour_primaries=0:transfer_characteristics=0:matrix_coefficients=3 -i $(TARGET_SAMPLES)/hevc-conformance/AMP_A_Samsung_4.bit -vf scale,format=nv12 -frames:v 1
+ FATE_HEVC-$(call FRAMECRC, HEVC, HEVC, HEVC_METADATA_BSF SCALE_FILTER) += fate-hevc-color-reserved
+ 
++# Exercise the last two inverse-quantization table entries with 12-bit 4:4:4.
++fate-hevc-12bit-qp74: CMD = framemd5 -i $(TARGET_SAMPLES)/hevc/12bit-444-qp74.hevc -pix_fmt yuv444p12le
++fate-hevc-12bit-qp75: CMD = framemd5 -i $(TARGET_SAMPLES)/hevc/12bit-444-qp75.hevc -pix_fmt yuv444p12le
++FATE_HEVC-$(call FRAMEMD5, HEVC, HEVC, HEVC_PARSER) += fate-hevc-12bit-qp74 fate-hevc-12bit-qp75
++
+ FATE_SAMPLES_AVCONV += $(FATE_HEVC-yes)
+ FATE_SAMPLES_FFPROBE += $(FATE_HEVC_FFPROBE-yes)
+ 
+diff --git a/tests/ref/fate/hevc-12bit-qp74 b/tests/ref/fate/hevc-12bit-qp74
+new file mode 100644
+index 0000000..086adeb
+--- /dev/null
++++ b/tests/ref/fate/hevc-12bit-qp74
+@@ -0,0 +1,10 @@
++#format: frame checksums
++#version: 2
++#hash: MD5
++#tb 0: 1/25
++#media_type 0: video
++#codec_id 0: rawvideo
++#dimensions 0: 128x64
++#sar 0: 0/1
++#stream#, dts,        pts, duration,     size, hash
++0,          0,          0,        1,    49152, dd156676d75cc4801291a3a4d52ab375
+diff --git a/tests/ref/fate/hevc-12bit-qp75 b/tests/ref/fate/hevc-12bit-qp75
+new file mode 100644
+index 0000000..5e49351
+--- /dev/null
++++ b/tests/ref/fate/hevc-12bit-qp75
+@@ -0,0 +1,10 @@
++#format: frame checksums
++#version: 2
++#hash: MD5
++#tb 0: 1/25
++#media_type 0: video
++#codec_id 0: rawvideo
++#dimensions 0: 128x64
++#sar 0: 0/1
++#stream#, dts,        pts, duration,     size, hash
++0,          0,          0,        1,    49152, 28f5c39656c53f3dc6c147200e7223f2
+-- 
+2.50.1 (Apple Git-155)
+

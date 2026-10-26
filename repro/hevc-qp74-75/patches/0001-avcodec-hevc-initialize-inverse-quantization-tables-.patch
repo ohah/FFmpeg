@@ -1,0 +1,48 @@
+From 172f98a652aad6fff3314607abe80699f9d8eb12 Mon Sep 17 00:00:00 2001
+From: ohah <16170776+ohah@users.noreply.github.com>
+Date: Mon, 26 Oct 2026 18:42:00 +0900
+Subject: [PATCH 1/2] avcodec/hevc: initialize inverse quantization tables
+ through QP 75
+
+rem6 and div6 each have room for 76 entries but only initialize the
+first 74. The remaining entries are implicitly zero, so QP 74 and 75
+use an inverse quantization scale of 40 instead of 51 << 12 and
+57 << 12, respectively.
+
+These indices are valid for 12-bit HEVC, where the bit-depth offset is
+24. Append the missing remainder and quotient entries so high-QP
+12-bit residuals use the scaling specified in H.265 section 8.6.3.
+
+Synthetic 12-bit 4:4:4 inputs exercising each index differ from x265's
+reconstruction in 16377 and 16379 samples before this change. Both
+outputs match the encoder reconstruction exactly after the fix.
+
+Signed-off-by: ohah <16170776+ohah@users.noreply.github.com>
+---
+ libavcodec/hevc/cabac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libavcodec/hevc/cabac.c b/libavcodec/hevc/cabac.c
+index 57f43be..74dbcc7 100644
+--- a/libavcodec/hevc/cabac.c
++++ b/libavcodec/hevc/cabac.c
+@@ -1110,14 +1110,14 @@ void ff_hevc_hls_residual_coding(HEVCLocalContext *lc, const HEVCPPS *pps,
+             0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2,
+             3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5,
+             0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3,
+-            4, 5, 0, 1, 2, 3, 4, 5, 0, 1
++            4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3
+         };
+ 
+         static const uint8_t div6[51 + 4 * 6 + 1] = {
+             0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3,  3,  3,
+             3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6,  6,  6,
+             7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10,
+-            10, 10, 11, 11, 11, 11, 11, 11, 12, 12
++            10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12
+         };
+         int qp_y = lc->qp_y;
+ 
+-- 
+2.50.1 (Apple Git-155)
+
