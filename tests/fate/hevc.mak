@@ -351,6 +351,11 @@ FATE_HEVC-$(call FRAMECRC, MOV, HEVC) += fate-hevc-alpha
 fate-hevc-color-reserved: CMD = framecrc -bsf:v hevc_metadata=colour_primaries=0:transfer_characteristics=0:matrix_coefficients=3 -i $(TARGET_SAMPLES)/hevc-conformance/AMP_A_Samsung_4.bit -vf scale,format=nv12 -frames:v 1
 FATE_HEVC-$(call FRAMECRC, HEVC, HEVC, HEVC_METADATA_BSF SCALE_FILTER) += fate-hevc-color-reserved
 
+# Exercise the last two inverse-quantization table entries with 12-bit 4:4:4.
+fate-hevc-12bit-qp74: CMD = framemd5 -i $(TARGET_SAMPLES)/hevc/12bit-444-qp74.hevc -pix_fmt yuv444p12le
+fate-hevc-12bit-qp75: CMD = framemd5 -i $(TARGET_SAMPLES)/hevc/12bit-444-qp75.hevc -pix_fmt yuv444p12le
+FATE_HEVC-$(call FRAMEMD5, HEVC, HEVC, HEVC_PARSER) += fate-hevc-12bit-qp74 fate-hevc-12bit-qp75
+
 FATE_SAMPLES_AVCONV += $(FATE_HEVC-yes)
 FATE_SAMPLES_FFPROBE += $(FATE_HEVC_FFPROBE-yes)
 
